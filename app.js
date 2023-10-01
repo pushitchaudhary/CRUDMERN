@@ -1,18 +1,43 @@
-const express = require('express');
-const { ConnectionDatabase } = require('./database/database');
-const app = express();
+const express = require('express')
+const app = express()
+const { DatabaseConnection } = require('./database/database')
+const Blog = require('./module/blogModule')
 
-ConnectionDatabase();
 
-// GET API -> /
+DatabaseConnection()
+
+app.use(express.json())
+app.use(express.urlencoded({extended:true}))
+
+
 app.get('/',(req,res)=>{
     res.json({
-        status:200,
-        message:"Success"
+        status: 200,
+        message: "Successfully"
     })
 })
 
+app.get('/createBlog',(req,res)=>{
+    res.render('createBlog.ejs')
+})
+
+
+app.post('/createBlog', async (req,res)=>{
+    const title = req.body.title;
+    const subTitle = req.body.subtitle;
+    const description = req.body.description;
+
+    const blog = await Blog.create({
+        title:title,
+        subTitle:subTitle,
+        description:description
+    })
+    res.send("success")
+})
+
+
+
 
 app.listen(2000,()=>{
-    console.log("node has started at 2000")
+    console.log("Node has started at 2000")
 })
