@@ -2,14 +2,14 @@ const express = require('express')
 const app = express()
 const { DatabaseConnection } = require('./database/database')
 const Blog = require('./module/blogModule')
-const routes = require('./routes/blogRoutes');
-
+const router = require('./router/blogRouter')
 
 DatabaseConnection()
 
+// app.set('view engine','ejs')
+
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
-
 
 
 
@@ -20,24 +20,23 @@ app.get('/',(req,res)=>{
     })
 })
 
-
-
-
 app.post('/createBlog', async (req,res)=>{
     const title = req.body.title;
-    const subTitle = req.body.subtitle;
-    const description = req.body.description;
+        const subTitle = req.body.subtitle;
+        const description = req.body.description
     
-    const blog = await Blog.create({
-        title:title,
-        subTitle:subTitle,
-        description:description
-    })
-    res.send("success")
+        await Blog.create({
+            title:title,
+            subTitle:subTitle,
+            description:description
+        })
+        res.redirect('/')
 })
 
-app.use('',routes)
 
+
+
+app.use('',router)
 
 app.listen(2000,()=>{
     console.log("Node has started at 2000")
